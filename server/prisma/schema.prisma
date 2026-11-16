@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  passwordHash String
+  createdAt    DateTime    @default(now())
+  restaurant   Restaurant?
+}
+
+model Restaurant {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  name        String
+  nameAlt     String?
+  tagline     String?
+  taglineAlt  String?
+  logoUrl     String?
+  coverUrl    String?
+  accent      String     @default("#E8590C")
+  currency    String     @default("IQD")
+  lang        String     @default("en")
+  altLang     String     @default("ar")
+  phone       String?
+  instagram   String?
+  createdAt   DateTime   @default(now())
+  ownerId     String     @unique
+  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  categories  Category[]
+}
+
+model Category {
+  id           String     @id @default(cuid())
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  name         String
+  nameAlt      String?
+  sort         Int        @default(0)
+  items        Item[]
+
+  @@index([restaurantId])
+}
+
+model Item {
+  id             String   @id @default(cuid())
+  categoryId     String
+  category       Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name           String
+  nameAlt        String?
+  description    String?
+  descriptionAlt String?
+  price          Float
+  imageUrl       String?
+  tags           String   @default("") // comma separated: vegan,spicy,...
+  available      Boolean  @default(true)
+  featured       Boolean  @default(false)
+  sort           Int      @default(0)
+
+  @@index([categoryId])
+}

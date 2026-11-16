@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", "Cairo", Georgia, serif;
+  --font-sans: "Inter", "Cairo", system-ui, sans-serif;
+  --color-cream: #fbf7f2;
+  --color-ink: #1b1a17;
+  --color-muted: #7a746b;
+  --color-line: #eae3d9;
+  --shadow-card: 0 1px 0 rgb(0 0 0 / 0.03), 0 10px 28px -14px rgb(70 45 10 / 0.28);
+}
+
+/* Per-restaurant brand colour: set --accent on any wrapper element. */
+@theme inline {
+  --color-accent: var(--accent);
+}
+
+:root { --accent: #e8590c; }
+
+html { scroll-behavior: smooth; }
+body { @apply bg-cream text-ink font-sans antialiased; -webkit-tap-highlight-color: transparent; }
+
+@keyframes card-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes sheet-in { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.card-in { animation: card-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.hero-in { animation: card-in 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+[data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+[data-reveal].in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1; transform: none; transition: none; }
+  .hero-in, .card-in { animation: none; }
+  html { scroll-behavior: auto; }
+}
+.sheet-in { animation: sheet-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.fade-in { animation: fade-in 0.25s ease both; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+@media print {
+  body * { visibility: hidden; }
+  .print-area, .print-area * { visibility: visible; }
+  .print-area { position: fixed; inset: 0; display: grid; place-items: center; background: #fff; box-shadow: none !important; }
+}

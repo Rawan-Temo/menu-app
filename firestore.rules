@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function isOwner(slug) {
+      return request.auth != null &&
+        get(/databases/$(db)/documents/restaurants/$(slug)).data.ownerUid == request.auth.uid;
+    }
+
+    match /restaurants/{slug} {
+      allow read: if true;                                   // public menus
+      allow create: if request.auth != null && request.resource.data.ownerUid == request.auth.uid;
+      allow update: if resource.data.ownerUid == request.auth.uid
+                    && request.resource.data.ownerUid == resource.data.ownerUid;
+
+      match /categories/{id} { allow read: if true; allow write: if isOwner(slug); }
+      match /items/{id}      { allow read: if true; allow write: if isOwner(slug); }
+    }
+  }
+}
